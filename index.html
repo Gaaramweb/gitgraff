@@ -1,772 +1,282 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#020617">
-    <title>Трекер Расписания & Статистика</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        html { -webkit-text-size-adjust: 100%; }
-        input.custom-checkbox { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
-        button { touch-action: manipulation; }
-        body { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
-        nav.app-nav { padding-bottom: env(safe-area-inset-bottom, 0px); }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Мой учебный трекер</title>
+<style>
+:root{color-scheme:dark;--bg:#0e1218;--card:#161c26;--line:#252e3d;--tx:#eceae4;--mut:#8f98a8;--ac:#e0b457;--ok:#7fc8a0;--okbg:#13241d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:640px;margin:0 auto;padding:16px 16px 110px}
+h1{font:600 28px/1.15 "Iowan Old Style",Georgia,"Times New Roman",serif;margin:8px 0 2px}
+h2{font-size:16px;color:var(--mut);margin:26px 0 8px;font-weight:600}
+h3{margin:0 0 4px;font:600 20px/1.2 "Iowan Old Style",Georgia,serif}
+p{margin:4px 0}.m,small{color:var(--mut)}small{display:block;font-size:13px;font-weight:400}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}.row b{font-size:22px;white-space:nowrap}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);border-radius:6px;transition:width .3s}
+.mr{display:flex;justify-content:space-between;margin:12px 0 5px;font-size:15px}
+.task{display:flex;align-items:center;gap:14px;width:100%;min-height:66px;padding:12px 16px;margin:8px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.task.on{border-color:var(--ok);background:var(--okbg)}.task.on b{color:var(--ok)}
+.ck{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--mut);display:grid;place-items:center;font-weight:700;color:#0e1218}
+.task.on .ck{background:var(--ok);border-color:var(--ok)}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:8px}.hd div{text-align:center}
+.ar{width:48px;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:24px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;min-height:46px;cursor:pointer}
+.chip.on{background:var(--ac);color:#0e1218;border-color:var(--ac)}.chip small{display:inline;margin-left:6px;color:inherit;opacity:.75}
+.btn{display:block;width:100%;min-height:54px;margin:10px 0;border:0;border-radius:14px;background:var(--ac);color:#0e1218;font:inherit;font-weight:700;cursor:pointer}
+.btn.big{min-height:62px;font-size:18px}
+textarea,input{width:100%;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;margin:6px 0}
+textarea{resize:vertical}
+label{display:block;color:var(--mut);font-size:14px;margin-top:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tp{display:flex;gap:6px;align-items:center}.x{flex:none;width:44px;height:44px;border:0;background:none;color:var(--mut);font-size:26px;cursor:pointer}
+.add{display:flex;gap:8px;margin-top:12px}.add .btn{width:auto;padding:0 18px;margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px}
+.u{min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;cursor:pointer}
+.u.on{background:var(--ok);color:#0e1218;border-color:var(--ok)}.u.cur{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac)}
+.hr{display:grid;grid-template-columns:104px 1fr 48px;gap:12px;align-items:center;width:100%;padding:13px 0;background:none;border:0;border-bottom:1px solid var(--line);color:var(--tx);font:inherit;text-align:left;cursor:pointer}
+.hr b{text-align:right}.hr small{display:inline}
+.warn{background:#2a2112;border:1px solid #5a4620;border-radius:12px;padding:12px;margin:8px 0;font-size:14px}
+.sc{display:block;width:100%;text-align:left;padding:12px 14px;margin:8px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--tx);font:inherit;font-size:14px;cursor:pointer}.sc b{display:block;font-size:15px;margin-bottom:2px}.sc span{display:block;color:var(--mut)}.sc i{font-style:normal;color:var(--ac)}.sc.on{border-color:var(--ac)}
+.two b{display:block;font-size:20px}
+.info{display:flex;gap:14px;padding:8px 16px;color:var(--mut);font-size:14px}.info span:first-child{flex:none;min-width:100px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0b0f14;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;min-height:60px;padding:0;background:none;border:0;color:var(--mut);font:inherit;font-size:11px;cursor:pointer}
+nav button.on{color:var(--ac);font-weight:700}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
-
-    <!-- Top Sticky Navigation Bar -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 shadow-lg">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400 font-bold text-sm">
-                    18
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm text-white leading-tight">Трекер Расписания</h1>
-                    <p class="text-[10px] text-slate-400">Старт отсчёта: 18 октября</p>
-                </div>
-            </div>
-            <button onclick="switchTab('rules')" class="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 px-2.5 py-1.5 rounded-lg active:scale-95 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-book-open text-indigo-400"></i> Правила
-            </button>
-        </div>
-    </header>
-
-    <main class="max-w-md mx-auto px-4 pt-4">
-
-        <!-- TAB 1: TODAY / DAILY SCHEDULE -->
-        <section id="tab-daily" class="tab-content space-y-4">
-            
-            <!-- Date Navigator -->
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 shadow-md space-y-3">
-                <div class="flex justify-between items-center">
-                    <button onclick="changeDate(-1)" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 active:scale-95 transition">
-                        <i class="fa-solid fa-chevron-left text-xs"></i>
-                    </button>
-                    <div class="text-center">
-                        <div id="selected-date-str" class="font-bold text-base text-white">18 Октября, Воскресенье</div>
-                        <div id="selected-week-info" class="text-xs font-medium text-indigo-400">Неделя 1 • День 7</div>
-                    </div>
-                    <button onclick="changeDate(1)" class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 active:scale-95 transition">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
-                </div>
-
-                <div class="flex gap-2">
-                    <button onclick="jumpToDate('2026-10-18')" class="flex-1 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs font-medium text-slate-300 hover:text-white transition">
-                        18 Окт (Старт)
-                    </button>
-                    <button onclick="jumpToToday()" class="flex-1 py-1.5 bg-indigo-600/30 border border-indigo-500/40 rounded-xl text-xs font-medium text-indigo-300 hover:text-white transition">
-                        Сегодня
-                    </button>
-                </div>
-            </div>
-
-            <!-- Daily Progress Bar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                <div class="flex justify-between items-center text-xs">
-                    <span class="text-slate-400">Прогресс за день</span>
-                    <span id="daily-progress-text" class="font-bold text-indigo-400">0% (0/0)</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                    <div id="daily-progress-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <!-- Main Shift Summary -->
-            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
-                <div class="flex items-center space-x-2.5">
-                    <i class="fa-solid fa-briefcase text-amber-400 text-sm"></i>
-                    <div>
-                        <span class="text-xs text-slate-400 block">Дневной график</span>
-                        <span id="day-shift-text" class="text-xs font-medium text-slate-200">Работа + Университет: 8:30–21:00</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tasks Container -->
-            <div id="tasks-container" class="space-y-2.5">
-                <!-- Dynamically Populated -->
-            </div>
-        </section>
-
-        <!-- TAB 2: FULL SCHEDULE (WEEK 1 & WEEK 2) -->
-        <section id="tab-schedule" class="tab-content hidden space-y-4">
-            <!-- Week Selector -->
-            <div class="grid grid-cols-2 gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-800">
-                <button id="btn-week-1" onclick="switchScheduleWeek(1)" class="py-2 text-xs font-semibold rounded-xl transition text-white bg-indigo-600 shadow">
-                    Неделя 1
-                </button>
-                <button id="btn-week-2" onclick="switchScheduleWeek(2)" class="py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white">
-                    Неделя 2
-                </button>
-            </div>
-
-            <!-- Days List -->
-            <div id="schedule-week-container" class="space-y-3">
-                <!-- Dynamically Populated -->
-            </div>
-        </section>
-
-        <!-- TAB 3: STATISTICS (FROM OCT 18) -->
-        <section id="tab-stats" class="tab-content hidden space-y-4">
-            
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <h2 class="font-bold text-sm text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-indigo-400"></i> Общий прогресс с 18 октября
-                    </h2>
-                    <span id="stats-start-tag" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full border border-slate-700">18.10.2026</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[11px] text-slate-400 block mb-1">Выполнение всего</span>
-                        <span id="stats-total-pct" class="text-2xl font-extrabold text-indigo-400">0%</span>
-                    </div>
-                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl text-center">
-                        <span class="text-[11px] text-slate-400 block mb-1">Серия дней (Streak)</span>
-                        <span id="stats-streak" class="text-2xl font-extrabold text-amber-400 flex items-center justify-center gap-1">
-                            0 <i class="fa-solid fa-fire text-amber-500 text-lg"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Category Breakdown Stats -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-                <h3 class="font-bold text-xs text-slate-300 uppercase tracking-wider">По категориям (с 18.10)</h3>
-                <div id="category-stats-list" class="space-y-3">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Day-by-day History Cards -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-                <h3 class="font-bold text-xs text-slate-300 uppercase tracking-wider">История выполнения по дням</h3>
-                <div id="daily-history-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 no-scrollbar">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-        </section>
-
-        <!-- TAB 4: GENERAL RULES -->
-        <section id="tab-rules" class="tab-content hidden space-y-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 shadow-lg">
-                <div class="border-b border-slate-800 pb-2">
-                    <h2 class="font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-compass text-indigo-400"></i> Общий режим дня
-                    </h2>
-                </div>
-
-                <div class="text-xs space-y-2 text-slate-300">
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">7:00</span>
-                        <span class="font-semibold text-amber-400">Подъём каждый день</span>
-                    </div>
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">7:00–7:30</span>
-                        <span class="font-medium text-sky-300">Английский (слова / AI-диалог)</span>
-                    </div>
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">7:30–8:15</span>
-                        <span class="text-slate-300">Завтрак, сборы, дорога</span>
-                    </div>
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">День</span>
-                        <span class="font-medium text-indigo-300">Работа / Университет</span>
-                    </div>
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">Вечер</span>
-                        <span class="text-slate-300">Юриспруденция (1ч) + SEO/контент</span>
-                    </div>
-                    <div class="flex justify-between py-1.5 border-b border-slate-800/80">
-                        <span class="text-slate-400">23:30–00:00</span>
-                        <span class="text-slate-300">Подготовка ко сну</span>
-                    </div>
-                    <div class="flex justify-between py-1.5">
-                        <span class="text-slate-400">00:00–00:30</span>
-                        <span class="text-slate-400">Сон</span>
-                    </div>
-                </div>
-
-                <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-200 space-y-1">
-                    <div class="font-bold flex items-center gap-1.5 text-amber-400">
-                        <i class="fa-solid fa-triangle-exclamation"></i> Главное правило вечера:
-                    </div>
-                    <p class="text-[11px] text-amber-200/90 leading-relaxed">
-                        Если возвращаешься позже <strong>21:00</strong> — <u>НЕ добавляй час SEO</u>. В такой день делай только <strong>1 час учёбы</strong> + <strong>20–30 минут лёгкого английского</strong>.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Bottom Navigation Bar -->
-    <nav class="app-nav fixed bottom-0 left-0 right-0 bg-slate-900/95 border-t border-slate-800 backdrop-blur-md z-50">
-        <div class="max-w-md mx-auto grid grid-cols-4 px-2 py-1.5">
-            <button onclick="switchTab('daily')" id="nav-daily" class="nav-btn flex flex-col items-center py-1 text-indigo-400">
-                <i class="fa-solid fa-calendar-day text-base"></i>
-                <span class="text-[10px] font-medium mt-1">Сегодня</span>
-            </button>
-            <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200">
-                <i class="fa-solid fa-list-check text-base"></i>
-                <span class="text-[10px] font-medium mt-1">График</span>
-            </button>
-            <button onclick="switchTab('stats')" id="nav-stats" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200">
-                <i class="fa-solid fa-chart-pie text-base"></i>
-                <span class="text-[10px] font-medium mt-1">Статистика</span>
-            </button>
-            <button onclick="switchTab('rules')" id="nav-rules" class="nav-btn flex flex-col items-center py-1 text-slate-400 hover:text-slate-200">
-                <i class="fa-solid fa-shield-halved text-base"></i>
-                <span class="text-[10px] font-medium mt-1">Правила</span>
-            </button>
-        </div>
-    </nav>
-
-    <script>
-        // Start date: Oct 18, 2026
-        const START_DATE = "2026-10-18";
-
-        // Day Template Definitions for Week 1 and Week 2
-        const rawTemplates = {
-            1: [ // Week 1 (0: Mon, 1: Tue ... 6: Sun)
-                {
-                    dayName: "Понедельник",
-                    shift: "Работа + Университет: 8:30–21:00",
-                    tasks: [
-                        { id: "w1_m1", time: "07:00–07:30", text: "Английский: 10 новых слов + чтение текста", cat: "english", hours: 0.5 },
-                        { id: "w1_m2", time: "07:30–08:15", text: "Завтрак, сборы, дорога", cat: "routine", hours: 0.75 },
-                        { id: "w1_m3", time: "08:30–21:00", text: "Работа + Университет", cat: "work", hours: 12.5 },
-                        { id: "w1_m4", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_m5", time: "22:15–22:45", text: "SEO: как Google находит и индексирует сайты", cat: "seo", hours: 0.5 },
-                        { id: "w1_m6", time: "22:45–23:00", text: "План на завтра", cat: "routine", hours: 0.25 },
-                        { id: "w1_m7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Вторник",
-                    shift: "Работа + Университет: 8:30–21:00",
-                    tasks: [
-                        { id: "w1_t1", time: "07:00–07:30", text: "Английский: AI-диалог «My day, studies and work»", cat: "english", hours: 0.5 },
-                        { id: "w1_t2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w1_t3", time: "08:30–21:00", text: "Работа + Университет", cat: "work", hours: 12.5 },
-                        { id: "w1_t4", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_t5", time: "22:15–23:00", text: "SEO: поисковый интент", cat: "seo", hours: 0.75 },
-                        { id: "w1_t6", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Среда",
-                    shift: "Работа + Университет: 10:00–21:00",
-                    tasks: [
-                        { id: "w1_w1", time: "07:00–07:30", text: "Английский: грамматика A2", cat: "english", hours: 0.5 },
-                        { id: "w1_w2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w1_w3", time: "08:15–09:30", text: "Свободное время / дорога", cat: "free", hours: 1.25 },
-                        { id: "w1_w4", time: "10:00–21:00", text: "Работа + Университет", cat: "work", hours: 11.0 },
-                        { id: "w1_w5", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_w6", time: "22:15–23:00", text: "SEO: ключевые слова и кластеры", cat: "seo", hours: 0.75 },
-                        { id: "w1_w7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Четверг",
-                    shift: "Работа + Университет: 12:00–21:00",
-                    tasks: [
-                        { id: "w1_th1", time: "07:00–07:30", text: "Английский: аудирование + пересказ AI", cat: "english", hours: 0.5 },
-                        { id: "w1_th2", time: "07:30–08:15", text: "Завтрак", cat: "routine", hours: 0.75 },
-                        { id: "w1_th3", time: "08:15–11:30", text: "Свободный блок: SEO-теория или отдых", cat: "free", hours: 3.25 },
-                        { id: "w1_th4", time: "12:00–21:00", text: "Работа + Университет", cat: "work", hours: 9.0 },
-                        { id: "w1_th5", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_th6", time: "22:15–23:00", text: "SEO: title, meta description, H1–H3", cat: "seo", hours: 0.75 },
-                        { id: "w1_th7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Пятница",
-                    shift: "Вуз: 8:30–12:00 | Работа: 16:00–21:00",
-                    tasks: [
-                        { id: "w1_f1", time: "07:00–07:30", text: "Английский: AI-диалог + новые фразы", cat: "english", hours: 0.5 },
-                        { id: "w1_f2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w1_f3", time: "08:30–12:00", text: "Университет", cat: "work", hours: 3.5 },
-                        { id: "w1_f4", time: "12:30–13:30", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_f5", time: "13:30–14:30", text: "SEO: анализ 3 статей конкурентов", cat: "seo", hours: 1.0 },
-                        { id: "w1_f6", time: "14:30–15:30", text: "Еда / отдых", cat: "routine", hours: 1.0 },
-                        { id: "w1_f7", time: "16:00–21:00", text: "Работа", cat: "work", hours: 5.0 },
-                        { id: "w1_f8", time: "21:30–22:00", text: "Повторение английских слов", cat: "english", hours: 0.5 },
-                        { id: "w1_f9", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Суббота",
-                    shift: "Выходной от работы",
-                    tasks: [
-                        { id: "w1_s1", time: "07:00–07:30", text: "Английский: speaking с AI", cat: "english", hours: 0.5 },
-                        { id: "w1_s2", time: "07:30–08:30", text: "Завтрак / отдых", cat: "routine", hours: 1.0 },
-                        { id: "w1_s3", time: "08:30–11:30", text: "SEO: базовый аудит тестового WordPress-сайта", cat: "seo", hours: 3.0 },
-                        { id: "w1_s4", time: "11:30–12:30", text: "Перерыв / прогулка", cat: "free", hours: 1.0 },
-                        { id: "w1_s5", time: "12:30–14:00", text: "WordPress: структура, категории, перелинковка", cat: "seo", hours: 1.5 },
-                        { id: "w1_s6", time: "14:00–15:00", text: "Обед", cat: "routine", hours: 1.0 },
-                        { id: "w1_s7", time: "15:00–16:30", text: "Контент: тема статьи и сбор ключей", cat: "seo", hours: 1.5 },
-                        { id: "w1_s8", time: "16:30–17:30", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_s9", time: "17:30–19:00", text: "Отдых / спорт", cat: "free", hours: 1.5 },
-                        { id: "w1_s10", time: "19:00–20:30", text: "Форекс-бот: демо, журнал сделок, 1 стратегия", cat: "forex", hours: 1.5 },
-                        { id: "w1_s11", time: "20:30–21:30", text: "Ужин / отдых", cat: "routine", hours: 1.0 },
-                        { id: "w1_s12", time: "21:30–22:30", text: "Английский: сериал/YouTube с субтитрами", cat: "english", hours: 1.0 },
-                        { id: "w1_s13", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Воскресенье",
-                    shift: "Работа + Университет: 8:30–21:00",
-                    tasks: [
-                        { id: "w1_su1", time: "07:00–07:30", text: "Английский: повторение слов недели", cat: "english", hours: 0.5 },
-                        { id: "w1_su2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w1_su3", time: "08:30–21:00", text: "Работа + Университет", cat: "work", hours: 12.5 },
-                        { id: "w1_su4", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w1_su5", time: "22:15–23:00", text: "Итоги недели: SEO, английский, учёба", cat: "seo", hours: 0.75 },
-                        { id: "w1_su6", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                }
-            ],
-            2: [ // Week 2
-                {
-                    dayName: "Понедельник",
-                    shift: "Работа + Университет: 10:00–21:00",
-                    tasks: [
-                        { id: "w2_m1", time: "07:00–07:30", text: "Английский: грамматика A2 + AI-диалог", cat: "english", hours: 0.5 },
-                        { id: "w2_m2", time: "07:30–08:15", text: "Завтрак", cat: "routine", hours: 0.75 },
-                        { id: "w2_m3", time: "08:15–09:30", text: "Свободное время / дорога", cat: "free", hours: 1.25 },
-                        { id: "w2_m4", time: "10:00–21:00", text: "Работа + Университет", cat: "work", hours: 11.0 },
-                        { id: "w2_m5", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_m6", time: "22:15–23:00", text: "SEO: Google Search Console — показы, клики, CTR", cat: "seo", hours: 0.75 },
-                        { id: "w2_m7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Вторник",
-                    shift: "Работа + Университет: 8:30–21:00",
-                    tasks: [
-                        { id: "w2_t1", time: "07:00–07:30", text: "Английский: чтение статьи + пересказ AI", cat: "english", hours: 0.5 },
-                        { id: "w2_t2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w2_t3", time: "08:30–21:00", text: "Работа + Университет", cat: "work", hours: 12.5 },
-                        { id: "w2_t4", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_t5", time: "22:15–23:00", text: "SEO: анализ конкурентов по теме", cat: "seo", hours: 0.75 },
-                        { id: "w2_t6", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Среда",
-                    shift: "Работа + Университет: 12:00–21:00",
-                    tasks: [
-                        { id: "w2_w1", time: "07:00–07:30", text: "Английский: аудио + разговорная практика", cat: "english", hours: 0.5 },
-                        { id: "w2_w2", time: "07:30–08:15", text: "Завтрак", cat: "routine", hours: 0.75 },
-                        { id: "w2_w3", time: "08:15–11:30", text: "Свободный блок: SEO-практика или отдых", cat: "free", hours: 3.25 },
-                        { id: "w2_w4", time: "12:00–21:00", text: "Работа + Университет", cat: "work", hours: 9.0 },
-                        { id: "w2_w5", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_w6", time: "22:15–23:00", text: "SEO: план статьи — заголовок, структура, ключи", cat: "seo", hours: 0.75 },
-                        { id: "w2_w7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Четверг",
-                    shift: "Работа + Университет: 12:00–21:00",
-                    tasks: [
-                        { id: "w2_th1", time: "07:00–07:30", text: "Английский: письмо 100–150 слов + AI", cat: "english", hours: 0.5 },
-                        { id: "w2_th2", time: "07:30–08:15", text: "Завтрак", cat: "routine", hours: 0.75 },
-                        { id: "w2_th3", time: "08:15–11:30", text: "Свободный блок: WordPress или отдых", cat: "free", hours: 3.25 },
-                        { id: "w2_th4", time: "12:00–21:00", text: "Работа + Университет", cat: "work", hours: 9.0 },
-                        { id: "w2_th5", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_th6", time: "22:15–23:00", text: "WordPress: черновик статьи по SEO-плану", cat: "seo", hours: 0.75 },
-                        { id: "w2_th7", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Пятница",
-                    shift: "Вуз: 8:30–12:00 | Работа: 16:00–21:00",
-                    tasks: [
-                        { id: "w2_f1", time: "07:00–07:30", text: "Английский: разговорная практика", cat: "english", hours: 0.5 },
-                        { id: "w2_f2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w2_f3", time: "08:30–12:00", text: "Университет", cat: "work", hours: 3.5 },
-                        { id: "w2_f4", time: "12:30–13:30", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_f5", time: "13:30–14:30", text: "SEO: оптимизация черновика статьи", cat: "seo", hours: 1.0 },
-                        { id: "w2_f6", time: "14:30–15:30", text: "Еда / отдых", cat: "routine", hours: 1.0 },
-                        { id: "w2_f7", time: "16:00–21:00", text: "Работа", cat: "work", hours: 5.0 },
-                        { id: "w2_f8", time: "21:30–22:00", text: "Повторение английского", cat: "english", hours: 0.5 },
-                        { id: "w2_f9", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Суббота",
-                    shift: "Выходной от работы",
-                    tasks: [
-                        { id: "w2_s1", time: "07:00–07:30", text: "Английский: speaking + vocabulary", cat: "english", hours: 0.5 },
-                        { id: "w2_s2", time: "07:30–08:30", text: "Завтрак / отдых", cat: "routine", hours: 1.0 },
-                        { id: "w2_s3", time: "08:30–11:30", text: "SEO: полный аудит небольшого сайта", cat: "seo", hours: 3.0 },
-                        { id: "w2_s4", time: "12:30–14:00", text: "WordPress: оформление статьи, фото, alt-тексты", cat: "seo", hours: 1.5 },
-                        { id: "w2_s5", time: "15:00–16:30", text: "Контент: 3 идеи Reels/Shorts на тему SEO", cat: "seo", hours: 1.5 },
-                        { id: "w2_s6", time: "16:30–17:30", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_s7", time: "19:00–20:30", text: "Форекс-бот: демо, тест стратегии", cat: "forex", hours: 1.5 },
-                        { id: "w2_s8", time: "21:30–22:30", text: "Английский: видео или подкаст с субтитрами", cat: "english", hours: 1.0 },
-                        { id: "w2_s9", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                },
-                {
-                    dayName: "Воскресенье",
-                    shift: "Работа + Университет: 8:30–21:00",
-                    tasks: [
-                        { id: "w2_su1", time: "07:00–07:30", text: "Английский: итоговый диалог с AI", cat: "english", hours: 0.5 },
-                        { id: "w2_su2", time: "07:30–08:15", text: "Завтрак, сборы", cat: "routine", hours: 0.75 },
-                        { id: "w2_su3", time: "08:30–21:00", text: "Работа + Университет", cat: "work", hours: 12.5 },
-                        { id: "w2_su4", time: "21:15–22:15", text: "Учёба по юриспруденции", cat: "law", hours: 1.0 },
-                        { id: "w2_su5", time: "22:15–23:00", text: "Планирование следующей недели", cat: "seo", hours: 0.75 },
-                        { id: "w2_su6", time: "23:30", text: "Отход ко сну", cat: "sleep", hours: 0 }
-                    ]
-                }
-            ]
-        };
-
-        const categories = {
-            english: { name: "Английский", bg: "bg-sky-500/10", border: "border-sky-500/30", text: "text-sky-300", badgeBg: "bg-sky-950 text-sky-300" },
-            law: { name: "Юриспруденция", bg: "bg-indigo-500/10", border: "border-indigo-500/30", text: "text-indigo-300", badgeBg: "bg-indigo-950 text-indigo-300" },
-            seo: { name: "SEO & WordPress", bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-300", badgeBg: "bg-emerald-950 text-emerald-300" },
-            forex: { name: "Форекс-бот", bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-300", badgeBg: "bg-amber-950 text-amber-300" },
-            work: { name: "Работа/Вуз", bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-300", badgeBg: "bg-orange-950 text-orange-300" },
-            routine: { name: "Быт/Сборы", bg: "bg-slate-800/40", border: "border-slate-800", text: "text-slate-400", badgeBg: "bg-slate-900 text-slate-400" },
-            free: { name: "Отдых/Спорт", bg: "bg-teal-500/10", border: "border-teal-500/30", text: "text-teal-300", badgeBg: "bg-teal-950 text-teal-300" },
-            sleep: { name: "Сон", bg: "bg-slate-900", border: "border-slate-800", text: "text-slate-500", badgeBg: "bg-slate-950 text-slate-500" }
-        };
-
-        // Current Selected Date in 'YYYY-MM-DD'
-        let currentDateStr = "2026-10-18";
-        let activeScheduleWeek = 1;
-
-        // Local Storage Key
-        const STORAGE_KEY = "schedule_tracker_data_v1";
-        let appState = loadState();
-
-        function loadState() {
-            try {
-                const data = localStorage.getItem(STORAGE_KEY);
-                return data ? JSON.parse(data) : {};
-            } catch (e) {
-                return {};
-            }
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            } catch (e) {}
-        }
-
-        // Local date as YYYY-MM-DD (toISOString() uses UTC and shifts the day for UTC+ users)
-        function toLocalDateStr(d) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${y}-${m}-${day}`;
-        }
-
-        // Helper: Calculate week and day index from date relative to Oct 18, 2026 (Sunday)
-        function getScheduleForDate(dateStr) {
-            const start = new Date(START_DATE + "T00:00:00");
-            const current = new Date(dateStr + "T00:00:00");
-            const diffTime = current - start;
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-
-            // Oct 18, 2026 is Sunday (Week 1, Day index 6)
-            // Day index: Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6
-            let jsDay = current.getDay(); 
-            let dayIndex = (jsDay === 0) ? 6 : jsDay - 1;
-
-            // Week calculation (1 or 2)
-            // Oct 18 is Sun of Week 1
-            // Days from Oct 19 start Week 2, etc.
-            let daysFromMonOct12 = diffDays + 6; 
-            let totalWeeks = Math.floor(daysFromMonOct12 / 7);
-            let weekNum = (totalWeeks % 2 === 0) ? 1 : 2;
-
-            const template = rawTemplates[weekNum][dayIndex];
-
-            return {
-                weekNum,
-                dayIndex,
-                template,
-                diffDays
-            };
-        }
-
-        function formatDateDisplay(dateStr) {
-            const d = new Date(dateStr + "T00:00:00");
-            const months = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"];
-            const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-            
-            return `${d.getDate()} ${months[d.getMonth()]}, ${days[d.getDay()]}`;
-        }
-
-        function changeDate(offset) {
-            const d = new Date(currentDateStr + "T00:00:00");
-            d.setDate(d.getDate() + offset);
-            currentDateStr = toLocalDateStr(d);
-            renderDailyTab();
-        }
-
-        function jumpToToday() {
-            const today = new Date();
-            currentDateStr = toLocalDateStr(today);
-            renderDailyTab();
-        }
-
-        function jumpToDate(dateStr) {
-            currentDateStr = dateStr;
-            renderDailyTab();
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-indigo-400');
-                btn.classList.add('text-slate-400');
-            });
-            document.getElementById(`nav-${tabId}`).classList.add('text-indigo-400');
-            document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
-
-            if (tabId === 'stats') {
-                renderStatsTab();
-            } else if (tabId === 'schedule') {
-                renderFullScheduleTab();
-            }
-        }
-
-        function toggleTask(dateStr, taskId) {
-            if (!appState[dateStr]) {
-                appState[dateStr] = {};
-            }
-            appState[dateStr][taskId] = !appState[dateStr][taskId];
-            saveState();
-            renderDailyTab();
-        }
-
-        function renderDailyTab() {
-            const dateInfo = getScheduleForDate(currentDateStr);
-            const template = dateInfo.template;
-
-            document.getElementById('selected-date-str').innerText = formatDateDisplay(currentDateStr);
-            document.getElementById('selected-week-info').innerText = `Неделя ${dateInfo.weekNum} • ${template.dayName}`;
-            document.getElementById('day-shift-text').innerText = template.shift;
-
-            const dayState = appState[currentDateStr] || {};
-            const container = document.getElementById('tasks-container');
-            container.innerHTML = '';
-
-            let completedCount = 0;
-            const totalTasks = template.tasks.length;
-
-            template.tasks.forEach(task => {
-                const isChecked = !!dayState[task.id];
-                if (isChecked) completedCount++;
-
-                const cat = categories[task.cat] || categories.routine;
-
-                const card = document.createElement('div');
-                card.className = `p-3 rounded-2xl border ${cat.bg} ${cat.border} flex items-center justify-between gap-3 active:scale-[0.99] transition`;
-
-                card.innerHTML = `
-                    <div class="flex items-start space-x-3 flex-1 min-w-0">
-                        <input type="checkbox" id="chk-${task.id}" ${isChecked ? 'checked' : ''} 
-                            onchange="toggleTask('${currentDateStr}', '${task.id}')"
-                            class="custom-checkbox mt-0.5 h-5 w-5 rounded-md border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 cursor-pointer accent-indigo-600">
-                        <label for="chk-${task.id}" class="cursor-pointer flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="text-xs font-bold ${cat.text}">${task.time}</span>
-                                <span class="text-[9px] px-1.5 py-0.2 rounded font-medium ${cat.badgeBg}">${cat.name}</span>
-                            </div>
-                            <p class="text-xs text-slate-200 font-medium leading-snug">${task.text}</p>
-                        </label>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            // Progress Bar Calculation
-            const pct = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-            document.getElementById('daily-progress-text').innerText = `${pct}% (${completedCount}/${totalTasks})`;
-            document.getElementById('daily-progress-bar').style.width = `${pct}%`;
-        }
-
-        function switchScheduleWeek(weekNum) {
-            activeScheduleWeek = weekNum;
-            document.getElementById('btn-week-1').className = weekNum === 1 
-                ? "py-2 text-xs font-semibold rounded-xl transition text-white bg-indigo-600 shadow"
-                : "py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white";
-            document.getElementById('btn-week-2').className = weekNum === 2 
-                ? "py-2 text-xs font-semibold rounded-xl transition text-white bg-indigo-600 shadow"
-                : "py-2 text-xs font-semibold rounded-xl transition text-slate-400 hover:text-white";
-            renderFullScheduleTab();
-        }
-
-        function renderFullScheduleTab() {
-            const container = document.getElementById('schedule-week-container');
-            container.innerHTML = '';
-
-            const days = rawTemplates[activeScheduleWeek];
-            days.forEach(day => {
-                const dayBox = document.createElement('div');
-                dayBox.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3.5 space-y-2.5";
-
-                let tasksHtml = day.tasks.map(t => {
-                    const cat = categories[t.cat] || categories.routine;
-                    return `
-                        <div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/50 last:border-0">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-bold ${cat.text} w-20">${t.time}</span>
-                                <span class="text-slate-300 text-[11px]">${t.text}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                dayBox.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                        <span class="font-bold text-sm text-indigo-300">${day.dayName}</span>
-                        <span class="text-[10px] text-slate-400">${day.shift}</span>
-                    </div>
-                    <div class="space-y-1">
-                        ${tasksHtml}
-                    </div>
-                `;
-                container.appendChild(dayBox);
-            });
-        }
-
-        function renderStatsTab() {
-            const start = new Date(START_DATE + "T00:00:00");
-            const today = new Date();
-            
-            let totalPossibleTasks = 0;
-            let totalCompletedTasks = 0;
-
-            const categoryStats = {
-                english: { name: "Английский", totalHours: 0, doneHours: 0, cat: "english" },
-                law: { name: "Юриспруденция", totalHours: 0, doneHours: 0, cat: "law" },
-                seo: { name: "SEO & WordPress", totalHours: 0, doneHours: 0, cat: "seo" },
-                forex: { name: "Форекс-бот", totalHours: 0, doneHours: 0, cat: "forex" }
-            };
-
-            let streak = 0;
-            let tempStreak = 0;
-            let dayListHtml = '';
-
-            // Iterate day by day from Oct 18 to Today
-            let curr = new Date(start);
-            while (curr <= today) {
-                const dateStr = toLocalDateStr(curr);
-                const info = getScheduleForDate(dateStr);
-                const dayState = appState[dateStr] || {};
-
-                let dayTasksTotal = info.template.tasks.length;
-                let dayTasksDone = 0;
-
-                info.template.tasks.forEach(task => {
-                    const isDone = !!dayState[task.id];
-                    totalPossibleTasks++;
-                    if (isDone) {
-                        totalCompletedTasks++;
-                        dayTasksDone++;
-                    }
-
-                    if (categoryStats[task.cat]) {
-                        categoryStats[task.cat].totalHours += task.hours;
-                        if (isDone) {
-                            categoryStats[task.cat].doneHours += task.hours;
-                        }
-                    }
-                });
-
-                const dayPct = dayTasksTotal > 0 ? Math.round((dayTasksDone / dayTasksTotal) * 100) : 0;
-
-                // Streak logic (e.g. >= 70% completion count towards streak)
-                if (dayPct >= 70) {
-                    tempStreak++;
-                    streak = tempStreak;
-                } else {
-                    tempStreak = 0;
-                }
-
-                dayListHtml = `
-                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-xs">
-                        <div>
-                            <span class="font-bold text-slate-200 block">${formatDateDisplay(dateStr)}</span>
-                            <span class="text-[10px] text-slate-400">Выполнено ${dayTasksDone} из ${dayTasksTotal} задач</span>
-                        </div>
-                        <span class="font-bold text-xs px-2 py-1 rounded-lg ${dayPct >= 80 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : dayPct >= 50 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-400'}">
-                            ${dayPct}%
-                        </span>
-                    </div>
-                ` + dayListHtml;
-
-                curr.setDate(curr.getDate() + 1);
-            }
-
-            const totalPct = totalPossibleTasks > 0 ? Math.round((totalCompletedTasks / totalPossibleTasks) * 100) : 0;
-            document.getElementById('stats-total-pct').innerText = `${totalPct}%`;
-            document.getElementById('stats-streak').innerHTML = `${streak} <i class="fa-solid fa-fire text-amber-500 text-lg"></i>`;
-
-            // Category breakdown
-            const catContainer = document.getElementById('category-stats-list');
-            catContainer.innerHTML = '';
-
-            Object.values(categoryStats).forEach(c => {
-                const catInfo = categories[c.cat];
-                const pct = c.totalHours > 0 ? Math.round((c.doneHours / c.totalHours) * 100) : 0;
-
-                const card = document.createElement('div');
-                card.className = "space-y-1.5";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-medium ${catInfo.text}">${c.name}</span>
-                        <span class="text-slate-400 text-[11px]">${c.doneHours.toFixed(1)} / ${c.totalHours.toFixed(1)} ч (${pct}%)</span>
-                    </div>
-                    <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                        <div class="bg-indigo-500 h-full rounded-full" style="width: ${pct}%"></div>
-                    </div>
-                `;
-                catContainer.appendChild(card);
-            });
-
-            document.getElementById('daily-history-list').innerHTML = dayListHtml || '<div class="text-xs text-slate-500 text-center py-2">Нет данных</div>';
-        }
-
-        // Initialize with default date (Oct 18 or Today if after Oct 18)
-        const todayStr = toLocalDateStr(new Date());
-        if (todayStr >= START_DATE) {
-            currentDateStr = todayStr;
-        } else {
-            currentDateStr = START_DATE;
-        }
-
-        renderDailyTab();
-    </script>
+<body>
+<main id="app"></main>
+<nav>
+<button data-a="v" data-id="today">Сегодня</button>
+<button data-a="v" data-id="hist">История</button>
+<button data-a="v" data-id="law">Юрбаза</button>
+<button data-a="v" data-id="eng">Английский</button>
+<button data-a="v" data-id="bis">Бисер</button>
+<button data-a="v" data-id="data">Данные</button>
+</nav>
+<script>
+const K='uchtrek_v1';
+const TASKS=[{id:'eng',t:'Английский',h:'30–45 минут'},{id:'law',t:'Юрбаза',h:'максимум 1 час'},{id:'note',t:'Конспект своими словами',h:'5–10 пунктов'},{id:'bis',t:'«Игра в бисер»',h:'20–40 минут'},{id:'rep',t:'Отчёт наставнику',h:'да / нет'}];
+const SEO={id:'seo',t:'SEO',h:'30–60 минут'};
+const IPPU={id:'ippu',t:'ИППУ',h:'20–30 минут'};
+const IPPU_DAYS=[2,6];
+const DISC=[
+{id:'civ',n:'Гражданское право',p:'2 дня в неделю',b:'Суханов'},
+{id:'adm',n:'Административное право',p:'1 день в неделю',b:'Волков'},
+{id:'biz',n:'Предпринимательское право',p:'1 день в неделю',b:'Губин / Лахно или другой учебник'},
+{id:'cri',n:'Уголовное право',p:'1–2 дня в неделю',b:'отдельный учебник'},
+{id:'ippu',n:'ИППУ',p:'2 раза в неделю',b:'Платон, Макиавелли, Монтескьё'}];
+const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const WD=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+const WS=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+const def=()=>({days:{},sel:'civ',topics:{civ:[],adm:[],biz:[],cri:[],ippu:[{t:'Текст по Платону, «Государство»',d:0},{t:'Текст по Макиавелли, «Государь»',d:0},{t:'Текст по Монтескьё, «О духе законов»',d:0}]},eng:{total:145,done:{}},book:{page:0,total:0,notes:[]}});
+let S,OK=true;
+try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!S.days)S=def();
+S=Object.assign(def(),S);
+try{localStorage.setItem(K+'_t','1')}catch(e){OK=false}
+const save=()=>{try{S.saved=Date.now();localStorage.setItem(K,JSON.stringify(S))}catch(e){OK=false}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const fmt=d=>d.getDate()+' '+MON[d.getMonth()];
+const left=(m,d)=>{const n=new Date();n.setHours(0,0,0,0);return Math.round((new Date(n.getFullYear(),m,d)-n)/864e5)};
+const lt=n=>n>0?n+' дн.':n===0?'сегодня':'срок прошёл';
+const D=k=>S.days[k]||{done:{},n:{}};
+const ensure=k=>S.days[k]||(S.days[k]={done:{},n:{}});
+const PLAN={
+'2026-11-07':[['20:00–23:20','«Игра в бисер»: до стр. 235','p235']],
+'2026-11-08':[['7:00–7:30','Английский: юнит 5','u5'],['8:30–21:00','Работа','i'],['21:15–23:15','«Игра в бисер»: стр. 235–330','p330'],['23:15–23:45','Подготовка к понедельнику: административное право'],['23:45–00:00','Подготовка к понедельнику: ИППУ'],['00:00–00:10','Отчёт']],
+'2026-11-09':[['7:00–7:30','Английский: юнит 6','u6'],['10:00–21:00','Работа','i'],['21:15–23:15','«Игра в бисер»: стр. 330–425','p425'],['23:15–23:45','Подготовка ко вторнику: большие данные'],['23:45–00:00','Подготовка ко вторнику: английский'],['00:00–00:10','Отчёт']],
+'2026-11-10':[['7:00–7:30','Английский: юнит 7','u7'],['8:30–21:00','Работа','i'],['21:15–23:00','«Игра в бисер»: стр. 425–447, финал','p447'],['23:00–23:30','Итог по книге'],['23:30–00:00','Подготовка к среде: философия'],['00:00–00:10','Отчёт']],
+'2026-11-11':[['7:00–7:30','Английский: юнит 8','u8'],['12:00–21:00','Работа','i'],['21:15–22:15','Подготовка к четвергу: этика деловых отношений'],['22:15–22:45','Подготовка к четвергу: ИГПЗС'],['22:45–23:00','Отчёт']],
+'2026-11-12':[['7:00–7:30','Английский: юнит 9','u9'],['12:00–21:00','Работа','i'],['21:15–22:15','Подготовка к пятнице: предпринимательское право'],['22:15–22:45','Подготовка к пятнице: гражданское право'],['22:45–23:00','Отчёт']],
+'2026-11-13':[['7:00–7:30','Английский: юнит 10','u10'],['8:30–12:00','Университет','i'],['12:30–13:30','ИППУ: Платон, разбор'],['16:00–21:00','Работа','i'],['21:30–22:00','Подготовка к субботе: повторение'],['22:00–22:10','Отчёт']],
+'2026-11-14':[['10:00–11:00','Английский: повторение юнитов 5–10'],['11:00–12:00','ИППУ: Платон, разбор'],['12:00–13:00','Гражданское право: повторение недели'],['13:00–14:00','Административное право: повторение недели'],['14:00–15:00','Уголовное право: повторение недели'],['15:00–16:00','Предпринимательское право: повторение недели'],['16:00–17:00','Отдых','i'],['17:00–18:00','Подготовка к понедельнику: административное право'],['18:00–19:00','Подготовка к понедельнику: ИППУ'],['19:00–20:00','Отдых','i'],['20:00–21:00','Свободно / SEO по желанию','o'],['21:00–21:10','Отчёт']],
+'2026-11-15':[['7:00–7:30','Английский: мини-тест'],['8:30–21:00','Работа','i'],['21:15–21:30','Итог недели: 10–15 минут'],['21:30–22:00','Подготовка к понедельнику: административное право'],['22:00–22:10','Отчёт']]
+};
+const items=d=>{const p=PLAN[key(d)];return p?p.map((x,i)=>({id:'p'+i,h:x[0],t:x[1],f:x[2]||''})):null};
+const planned=d=>{const p=items(d);if(p)return p.filter(t=>t.f!=='i'&&t.f!=='o');return []};
+const bonus=d=>{const p=items(d);if(p)return p.filter(t=>t.f==='o');return []};
+const pct=d=>{const r=D(key(d)),l=planned(d);return l.length?Math.round(l.filter(t=>r.done[t.id]).length/l.length*100):null};
+const dp=id=>{const a=S.topics[id]||[];return a.length?Math.round(a.filter(x=>x.d).length/a.length*100):0};
+const ep=()=>{const n=S.eng.total-4;let c=0;for(let u=5;u<=S.eng.total;u++)if(S.eng.done[u])c++;return n>0?Math.round(c/n*100):0};
+const bp=()=>S.book.total>0?Math.min(100,Math.round(S.book.page/S.book.total*100)):0;
+const bar=p=>`<div class="bar"><i style="width:${p}%"></i></div>`;
+let V='today',vd=new Date(),H=5,X='',J='',M='';
+const PAIR={civ:5,adm:1,biz:5,cri:3,ippu:1};
+const WA=['воскресенье','понедельник','вторник','среду','четверг','пятницу','субботу'];
+const BT={'2026-11-07':235,'2026-11-08':330,'2026-11-09':425,'2026-11-10':447};
+const SCH=[
+['2026-11-08','',[],'8:30–21:00'],
+['2026-11-09','',['Физкультура — практика','Административное право — лекция','История политических и правовых учений — лекция'],'10:00–21:00'],
+['2026-11-10','',['Основы работы с большими данными — лекция','Иностранный язык — практика'],'8:30–21:00'],
+['2026-11-11','',['Философия — лекция','Уголовное право — лекция'],'12:00–21:00'],
+['2026-11-12','',['Иностранный язык — практика','Этика деловых отношений — лекция','История государства и права зарубежных стран — практика'],'12:00–21:00'],
+['2026-11-13','8:30–12:00',['Предпринимательское право — лекция','Гражданское право — лекция'],'16:00–21:00'],
+['2026-11-14','',[],'выходной'],
+['2026-11-15','',[],'8:30–21:00']];
+if(!S.mig)S.mig={};
+if(!S.mig.b1){S.book.total=447;if((S.book.page||0)<70)S.book.page=70;S.mig.b1=1;save()}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+const prepNow=d=>{const l=DISC.filter(x=>(PAIR[x.id]+6)%7===d.getDay()).map(x=>x.n);return l.length?`<p><b>Сегодня готовлю: ${l.join(', ')}.</b></p>`:`<p class='m'>Сегодня юрбазы к завтрашним парам нет.</p>`};
+function bookCard(){
+ const b=S.book,tot=b.total||447,pg=b.page||0,p=bp(),tg=BT[key(new Date())],need=tg?Math.max(0,tg-pg):null;
+ return `<div class='card'><div class='row'><span>«Игра в бисер»</span><b>${p}%</b></div>${bar(p)}
+ <div class='two' style='margin-top:14px'><div><small>Текущая страница</small><b>${pg} из ${tot}</b></div><div><small>Осталось</small><b>${Math.max(0,tot-pg)} стр.</b></div>
+ <div><small>Сегодня нужно${tg?' (до стр. '+tg+')':''}</small><b>${need===null?'—':need?need+' стр.':'готово'}</b></div><div><small>Дедлайн 10 ноября</small><b>${lt(left(10,10))}</b></div></div></div>`}
+function sched(){return `<h2>Общий график</h2><p class='m'>Учёба и работа — это разные расписания. Нажмите на день, чтобы открыть его план.</p>`+SCH.map(s=>{const d=new Date(s[0]+'T12:00:00');return `<button class='sc${key(vd)===s[0]?' on':''}' data-a='gd' data-k='${s[0]}'><b>${WS[d.getDay()]}, ${fmt(d)}</b><span><i>Учёба:</i> ${s[2].length?s[2].join('; ')+(s[1]?' ('+s[1]+')':''):'выходной'}</span><span><i>Работа:</i> ${s[3]}</span></button>`}).join('')}
+
+function today(){
+ const k=key(vd),r=D(k),l=planned(vd),p=pct(vd);
+ const row=(t,b)=>`<button class="task${r.done[t.id]?' on':''}" data-a="tg" data-id="${t.id}"><span class="ck">${r.done[t.id]?'✓':''}</span><span><b>${t.t}</b><small>${t.h}${b?' · по желанию':''}</small></span></button>`;
+ const pl=items(vd);
+ const body=pl?pl.map(t=>t.f==='i'?`<div class="info"><span>${t.h}</span><span>${t.t}</span></div>`:row(t,t.f==='o')).join(''):'<p class="m">На этот день плана нет.</p>';
+ const prog=DISC.map(d=>[d.n,dp(d.id)]).concat([['Английский',ep()],['«Игра в бисер»',bp()]]);
+ return `${OK?'':'<div class="warn">Браузер не сохраняет данные. Делайте копию на вкладке «Данные».</div>'}
+ <div class="hd"><button class="ar" data-a="pd" aria-label="Предыдущий день">‹</button><div><h1>${WD[vd.getDay()]}</h1><p class="m">${fmt(vd)}${k===key(new Date())?', сегодня':''}</p></div><button class="ar" data-a="nd" aria-label="Следующий день">›</button></div>
+ <div class="card"><div class="row"><span>${pl?'Прогресс дня':'План на этот день не задан'}</span><b>${pl?p+'%':'—'}</b></div>${bar(pl?p:0)}</div>
+ ${bookCard()}
+ ${body}
+ ${sched()}
+ <h2>Заметки</h2>
+ <label>Что понял</label><textarea rows="3" data-n="u">${esc(r.n.u||'')}</textarea>
+ <label>Что не понял</label><textarea rows="3" data-n="n">${esc(r.n.n||'')}</textarea>
+ <label>Почему не успел</label><textarea rows="3" data-n="w">${esc(r.n.w||'')}</textarea>
+ <h2>Мои цели</h2>
+ <div class="card">
+ <div class="row"><span>Зачёты — после 20 декабря</span><b>${lt(left(11,20))}</b></div>
+ <div class="row"><span>Три текста по ИППУ — к середине декабря</span><b>${lt(left(11,15))}</b></div>
+ ${prog.map(x=>`<div class="mr"><span>${x[0]}</span><span>${x[1]}%</span></div>${bar(x[1])}`).join('')}
+ <p class="m" style="margin-top:16px">Английский A2 → B1–B2. Не распыляться: форекс, игры, Legal Tech.</p></div>`;
+}
+function hist(){
+ const now=new Date(),arr=[];for(let i=0;i<H;i++)arr.push(addDays(now,-i));
+ const ps=arr.map(pct),vs=ps.filter(x=>x!==null),avg=vs.length?Math.round(vs.reduce((a,b)=>a+b,0)/vs.length):null;
+ return `<h1>История</h1>
+ <div class="chips">${[5,7,30].map(x=>`<button class="chip${x===H?' on':''}" data-a="h" data-k="${x}">${x} дней</button>`).join('')}</div>
+ <div class="card"><div class="row"><span>Среднее за ${H} дн. (дни с планом)</span><b>${avg===null?'—':avg+'%'}</b></div>${bar(avg||0)}</div>
+ ${arr.map((d,i)=>`<button class="hr" data-a="go" data-i="${i}"><span>${fmt(d)} <small>${WS[d.getDay()]}</small></span>${bar(ps[i]||0)}<b>${ps[i]===null?'—':ps[i]+'%'}</b></button>`).join('')}
+ <button class="btn big" data-a="ex" style="margin-top:20px">Экспорт за 5 дней</button>
+ ${X?`<textarea id="xt" rows="14" readonly>${esc(X)}</textarea><button class="btn" data-a="cp" data-t="xt">Скопировать</button>`:''}`;
+}
+function law(){
+ const d=DISC.find(x=>x.id===S.sel),a=S.topics[d.id],p=dp(d.id);
+ return `<h1>Юрбаза</h1>
+ <div class='card'><p>Юрбаза готовится накануне пары, а не в случайный день.</p>${prepNow(new Date())}</div>
+ <div class="chips">${DISC.map(x=>`<button class="chip${x.id===d.id?' on':''}" data-a="sel" data-id="${x.id}">${x.n}<small>${dp(x.id)}%</small></button>`).join('')}</div>
+ <div class="card"><h3>${d.n}</h3><p class='m'>${d.p}. Учебник: ${d.b}.</p>
+ <p class='m'>Пара в ${WA[PAIR[d.id]]}, готовлюсь в ${WA[(PAIR[d.id]+6)%7]}.</p>
+ <div class="row" style="margin-top:12px"><span>${a.filter(x=>x.d).length} из ${a.length} тем</span><b>${p}%</b></div>${bar(p)}</div>
+ ${a.map((x,i)=>`<div class="tp"><button class="task${x.d?' on':''}" data-a="tt" data-i="${i}"><span class="ck">${x.d?'✓':''}</span><b>${esc(x.t)}</b></button><button class="x" data-a="td" data-i="${i}" aria-label="Удалить тему">×</button></div>`).join('')||'<p class="m">Тем пока нет. Добавьте первую тему ниже.</p>'}
+ <div class="add"><input id="nt" placeholder="Новая тема, например: глава 1"><button class="btn" data-a="ta">Добавить</button></div>`;
+}
+function eng(){
+ const t=S.eng.total;let cur=0,c=0,g='';
+ for(let i=5;i<=t;i++){if(S.eng.done[i])c++;else if(!cur)cur=i}
+ for(let i=5;i<=t;i++)g+=`<button class="u${S.eng.done[i]?' on':''}${i===cur?' cur':''}" data-a="ut" data-i="${i}">${i}</button>`;
+ const p=ep();
+ return `<h1>Английский</h1>
+ <div class="card"><p class="m">English Grammar in Use, с юнита 5</p><div class="row" style="margin-top:8px"><span>${c} из ${t-4} юнитов</span><b>${p}%</b></div>${bar(p)}</div>
+ ${cur?`<button class="btn big" data-a="ud" data-i="${cur}">Юнит ${cur} выполнен ✓</button>`:'<p>Все юниты пройдены.</p>'}
+ <h2>Выберите юнит</h2><div class="grid">${g}</div>
+ <label>Всего юнитов в вашей книге<input type="number" id="et" value="${t}" min="5" max="300"></label>`;
+}
+function bis(){
+ const b=S.book,p=bp();
+ return `<h1>«Игра в бисер»</h1>
+ <div class="card"><div class="row"><span>Прочитано</span><b>${p}%</b></div>${bar(p)}
+ <div class="two"><label>Страница<input type="number" id="bp" min="0" value="${b.page||''}" placeholder="0"></label><label>Всего страниц<input type="number" id="bt" min="0" value="${b.total||''}" placeholder="0"></label></div>
+ ${b.total?'':'<p class="m" style="margin-top:10px">Укажите, сколько всего страниц в книге.</p>'}</div>
+ <h2>Краткие выводы</h2>
+ <textarea id="bn" rows="3" placeholder="Что главное на этих страницах?"></textarea>
+ <button class="btn" data-a="ba">Сохранить вывод</button>
+ ${b.notes.map((n,i)=>`<div class="card"><div class="row"><span class="m">${esc(n.date)}, стр. ${n.page}</span><button class="x" data-a="bd" data-i="${i}" aria-label="Удалить вывод">×</button></div><p>${esc(n.text)}</p></div>`).join('')}`;
+}
+function data(){
+ return `<h1>Данные</h1>
+ <p class="m">Данные хранятся в этом браузере. Сделайте копию JSON, чтобы их не потерять.</p>
+ <p class='m'>${OK?'Последнее сохранение: '+(S.saved?new Date(S.saved).toLocaleString('ru-RU'):'ещё не было'):'Браузер не даёт сохранять данные. Делайте копию JSON.'}</p>
+ <button class="btn" data-a="je">Показать данные для копии</button>
+ ${J?`<textarea id="jt" rows="6" readonly>${esc(J)}</textarea><button class="btn" data-a="cp" data-t="jt">Скопировать</button>`:''}
+ <h2>Импорт</h2>
+ <textarea id="ji" rows="5" placeholder="Вставьте сюда JSON"></textarea>
+ <button class="btn" data-a="im">Загрузить данные</button>
+ ${M?`<p>${M}</p>`:''}`;
+}
+function report(){
+ const now=new Date(),L=['ОТЧЁТ ЗА 5 ДНЕЙ («Мой учебный трекер»)','Период: '+fmt(addDays(now,-4))+' — '+fmt(now),''];let s=0,cn=0;
+ for(let i=4;i>=0;i--){
+  const d=addDays(now,-i),r=D(key(d)),l=planned(d),p=pct(d);if(p!==null){s+=p;cn++}
+  L.push(fmt(d)+' ('+WS[d.getDay()]+'): '+(p===null?'плана нет':p+'%'));
+  L.push('Сделано: '+(l.concat(bonus(d)).filter(t=>r.done[t.id]).map(t=>t.t).join(', ')||'—'));
+  L.push('Не сделано: '+(l.filter(t=>!r.done[t.id]).map(t=>t.t).join(', ')||'—'));
+  if(r.n.u)L.push('Что понял: '+r.n.u);
+  if(r.n.n)L.push('Что не понял: '+r.n.n);
+  if(r.n.w)L.push('Почему не успел: '+r.n.w);
+  L.push('');
+ }
+ L.push('Среднее за 5 дней: '+(cn?Math.round(s/cn)+'%':'—'),'','Прогресс:');
+ DISC.forEach(d=>L.push('• '+d.n+': '+dp(d.id)+'%'));
+ L.push('• Английский (Grammar in Use): '+ep()+'%');
+ L.push('• «Игра в бисер»: '+bp()+'%'+(S.book.total?' (стр. '+S.book.page+' из '+S.book.total+')':''));
+ return L.join('\n');
+}
+const VIEWS={today,hist,law,eng,bis,data};
+function render(){
+ $('app').innerHTML=VIEWS[V]();
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===V));
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-a]');if(!b)return;
+ const a=b.dataset.a,i=+b.dataset.i,id=b.dataset.id;
+ switch(a){
+  case 'v':V=id;M='';window.scrollTo(0,0);break;
+  case 'tg':{const r=ensure(key(vd));r.done[id]=!r.done[id];const it=(items(vd)||[]).find(x=>x.id===id);
+   if(it&&it.f[0]==='u')S.eng.done[+it.f.slice(1)]=r.done[id];
+   if(it&&it.f[0]==='p'&&r.done[id]){S.book.page=Math.max(S.book.page||0,+it.f.slice(1));if(!S.book.total)S.book.total=447}
+   break}
+  case 'pd':vd=addDays(vd,-1);break;
+  case 'nd':vd=addDays(vd,1);break;
+  case 'h':H=+b.dataset.k;X='';break;
+  case 'go':vd=addDays(new Date(),-i);V='today';window.scrollTo(0,0);break;
+  case 'ex':X=report();break;
+  case 'gd':vd=new Date(b.dataset.k+'T12:00:00');window.scrollTo(0,0);break;
+  case 'sel':S.sel=id;break;
+  case 'tt':S.topics[S.sel][i].d=S.topics[S.sel][i].d?0:1;break;
+  case 'td':S.topics[S.sel].splice(i,1);break;
+  case 'ta':{const v=$('nt').value.trim();if(v)S.topics[S.sel].push({t:v,d:0});break}
+  case 'ut':S.eng.done[i]=!S.eng.done[i];break;
+  case 'ud':S.eng.done[i]=true;break;
+  case 'ba':{const v=$('bn').value.trim();if(v)S.book.notes.unshift({date:fmt(new Date()),page:S.book.page||0,text:v});break}
+  case 'bd':S.book.notes.splice(i,1);break;
+  case 'je':J=JSON.stringify(S);break;
+  case 'im':{try{const o=JSON.parse($('ji').value.trim());if(!o||!o.days)throw 0;S=Object.assign(def(),o);M='Готово. Данные загружены.'}catch(x){M='Не получилось. Вставьте весь JSON целиком.'}break}
+  case 'cp':{const t=$(b.dataset.t);t.focus();t.select();let ok=false;try{ok=document.execCommand('copy')}catch(x){}
+   if(!ok&&navigator.clipboard)navigator.clipboard.writeText(t.value).catch(()=>{});
+   b.textContent='Скопировано ✓';setTimeout(()=>{b.textContent='Скопировать'},1500);return}
+ }
+ save();render();
+});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.n){ensure(key(vd)).n[t.dataset.n]=t.value;save()}});
+document.addEventListener('change',e=>{
+ const t=e.target,v=Math.max(0,parseInt(t.value)||0);
+ if(t.id==='bt'){S.book.total=v;if(v&&S.book.page>v)S.book.page=v}
+ else if(t.id==='bp')S.book.page=S.book.total?Math.min(v,S.book.total):v;
+ else if(t.id==='et')S.eng.total=Math.max(5,v);
+ else return;
+ save();render();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='nt'){e.preventDefault();document.querySelector('[data-a=ta]').click()}});
+render();
+</script>
 </body>
 </html>
